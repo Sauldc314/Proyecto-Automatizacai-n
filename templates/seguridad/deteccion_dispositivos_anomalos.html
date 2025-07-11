@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block title %}Detección de Dispositivos Anómalos{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <hr class="my-5">
+
+
+
+  <h2 class="mb-4 text-center">📡 Detección de Dispositivos Anómalos (NAC)</h2>
+
+  <div class="table-responsive shadow rounded">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-dark text-center">
+        <tr>
+          <th>MAC</th>
+          <th>IP</th>
+          <th>VLAN</th>
+          <th>Tráfico</th>
+          <th>Puertos</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in dispositivos %}
+        <tr class="{% if not d.autorizado %}table-danger{% endif %}">
+          <td>{{ d.mac }}</td>
+          <td>{{ d.ip }}</td>
+          <td>{{ d.vlan }}</td>
+          <td>{{ d.trafico }}</td>
+          <td>{{ d.puertos | join(', ') }}</td>
+          <td>{{ d.descripcion }}</td>
+          <td class="text-center">
+            {% if d.autorizado %}
+              <span class="badge bg-success">Autorizado</span>
+            {% else %}
+              <span class="badge bg-danger">Anómalo</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <br>
+  <h4>➕ Agregar Dispositivo Manualmente</h4>
+<form method="POST" action="{{ url_for('agregar_registro_nac') }}" class="row g-3">
+  <div class="col-md-3">
+    <input type="text" name="mac" class="form-control" placeholder="MAC (AA:BB:CC...)" required>
+  </div>
+  <div class="col-md-2">
+    <input type="text" name="ip" class="form-control" placeholder="IP" required>
+  </div>
+  <div class="col-md-2">
+    <input type="text" name="vlan" class="form-control" placeholder="VLAN" required>
+  </div>
+  <div class="col-md-2">
+    <input type="text" name="trafico" class="form-control" placeholder="Tráfico (MB/GB)" required>
+  </div>
+  <div class="col-md-2">
+    <input type="text" name="puertos" class="form-control" placeholder="Puertos (ej: 80,443)">
+  </div>
+  <div class="col-md-1 d-grid">
+    <button class="btn btn-primary">Guardar</button>
+  </div>
+</form>
+
+<h4 class="mt-5">✅ Agregar a Lista Blanca</h4>
+<form method="POST" action="{{ url_for('agregar_lista_blanca') }}" class="row g-3">
+  <div class="col-md-4">
+    <input type="text" name="mac" class="form-control" placeholder="MAC autorizada" required>
+  </div>
+  <div class="col-md-5">
+    <input type="text" name="descripcion" class="form-control" placeholder="Descripción del dispositivo" required>
+  </div>
+  <div class="col-md-3 d-grid">
+    <button class="btn btn-success">Autorizar</button>
+  </div>
+</form>
+
+</div>
+{% endblock %}

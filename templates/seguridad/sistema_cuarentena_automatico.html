@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block title %}Sistema de Cuarentena Automático{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4 text-center">🛡️ Sistema de Cuarentena Automático</h2>
+
+  <h4 class="mt-4">📋 Dispositivos Anómalos Detectados</h4>
+  {% if anomalos %}
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-danger">
+        <tr>
+          <th>MAC</th>
+          <th>IP</th>
+          <th>Interface</th>
+          <th>VLAN Detectada</th>
+          <th>Tráfico</th>
+          <th>Puertos</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in anomalos %}
+        <tr>
+          <td>{{ d.mac }}</td>
+          <td>{{ d.ip }}</td>
+          <td>{{ d.interface }}</td>
+          <td>{{ d.vlan_detectada }}</td>
+          <td>{{ d.trafico }}</td>
+          <td>{{ d.puertos | join(", ") }}</td>
+          <td>
+            <form method="POST" class="d-flex flex-column flex-md-row gap-2">
+              <input type="hidden" name="mac" value="{{ d.mac }}">
+              <input type="hidden" name="ip" value="{{ d.ip }}">
+              <input type="hidden" name="interface" value="{{ d.interface }}">
+
+              <input type="text" name="sw_ip" class="form-control form-control-sm" placeholder="IP Switch" required>
+              <input type="text" name="username" class="form-control form-control-sm" placeholder="Usuario" required>
+              <input type="password" name="password" class="form-control form-control-sm" placeholder="Contraseña" required>
+              <button type="submit" class="btn btn-sm btn-danger">Poner en Cuarentena</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-muted">No se han detectado dispositivos anómalos.</p>
+  {% endif %}
+
+  <hr class="my-5">
+
+  <h4>📜 Historial de Dispositivos en Cuarentena</h4>
+  {% if historial %}
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered">
+      <thead class="table-primary">
+        <tr>
+          <th>MAC</th>
+          <th>IP</th>
+          <th>Interface</th>
+          <th>VLAN Asignada</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for h in historial %}
+        <tr>
+          <td>{{ h.mac }}</td>
+          <td>{{ h.ip }}</td>
+          <td>{{ h.interface }}</td>
+          <td>{{ h.vlan_asignada }}</td>
+          <td>{{ h.fecha }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-muted">No hay historial registrado.</p>
+  {% endif %}
+</div>
+{% endblock %}

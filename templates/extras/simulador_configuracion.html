@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block title %}Simulador de Configuración Segura{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4 text-center">🧪 Simulador de Configuración Segura</h2>
+
+  <form method="POST" class="shadow-sm border rounded p-4 mb-4 bg-white">
+    <div class="mb-3">
+      <label for="comandos" class="form-label">Escribe los comandos simulados</label>
+      <textarea name="comandos" rows="10" class="form-control" placeholder="Ej:&#10;username admin password cisco123&#10;enable password admin" required>{{ comandos }}</textarea>
+    </div>
+    <div class="text-end">
+      <button class="btn btn-primary">Evaluar Seguridad</button>
+    </div>
+  </form>
+
+  {% if advertencias %}
+    <div class="alert alert-warning">
+      <h5 class="mb-2">🔎 Advertencias de Seguridad Detectadas:</h5>
+      <ul class="mb-0">
+        {% for advertencia in advertencias %}
+          <li>{{ advertencia }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% elif comandos %}
+    <div class="alert alert-success">
+      ✅ ¡No se detectaron problemas de seguridad en la configuración simulada!
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

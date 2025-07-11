@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Topología Dinámica{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="text-center mb-4">🌐 Topología Dinámica de la Red</h2>
+
+  <form method="POST" class="row g-3 mb-4 border p-3 shadow-sm rounded">
+    <div class="col-md-3">
+      <input type="text" name="ip" class="form-control" placeholder="IP de inicio" required>
+    </div>
+    <div class="col-md-3">
+      <input type="text" name="username" class="form-control" placeholder="Usuario SSH" required>
+    </div>
+    <div class="col-md-3">
+      <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+    </div>
+    <div class="col-md-3">
+      <input type="text" name="secret" class="form-control" placeholder="Enable Secret (opcional)">
+    </div>
+    <div class="col-12 text-end">
+      <button type="submit" class="btn btn-primary">Descubrir Topología</button>
+    </div>
+  </form>
+
+  {% if nodos %}
+  <div id="network" style="height: 500px; border: 1px solid #ccc;" class="rounded"></div>
+  {% endif %}
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css"/>
+
+<script>
+  const nodes = new vis.DataSet({{ nodos|tojson }});
+  const edges = new vis.DataSet({{ enlaces|tojson }});
+
+  const container = document.getElementById('network');
+  const data = { nodes: nodes, edges: edges };
+  const options = {
+    groups: {
+      local: { color: { background: "#0d6efd", border: "#084298" }, font: { color: "#fff" } },
+      vecino: { color: { background: "#6c757d", border: "#343a40" }, font: { color: "#fff" } }
+    },
+    physics: { stabilization: false },
+    nodes: { shape: "dot", size: 20 }
+  };
+
+  const network = new vis.Network(container, data, options);
+</script>
+{% endblock %}

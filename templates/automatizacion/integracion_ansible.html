@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block title %}Integración Ansible / Netmiko{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 600px;">
+  <h2 class="mb-4 text-center">Integración Ansible / Netmiko</h2>
+
+  <form method="post" novalidate>
+    <div class="mb-3">
+      <label for="ip" class="form-label">IP del Dispositivo</label>
+      <input type="text" class="form-control" id="ip" name="ip" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="username" class="form-label">Usuario</label>
+      <input type="text" class="form-control" id="username" name="username" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Contraseña</label>
+      <input type="password" class="form-control" id="password" name="password" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="secret" class="form-label">Enable Secret (opcional)</label>
+      <input type="password" class="form-control" id="secret" name="secret">
+    </div>
+
+    <div class="mb-3">
+      <label for="tarea" class="form-label">Tarea a realizar</label>
+      <select id="tarea" name="tarea" class="form-select" required onchange="toggleNuevaPass()">
+        <option value="" selected disabled>Selecciona una tarea</option>
+        <option value="backup">Backup Configuración</option>
+        <option value="monitoreo">Monitoreo Tráfico</option>
+        <option value="cambiar_pass">Cambiar Contraseña</option>
+      </select>
+    </div>
+
+    <div class="mb-3" id="divNuevaPass" style="display:none;">
+      <label for="nueva_pass" class="form-label">Nueva Contraseña</label>
+      <input type="password" class="form-control" id="nueva_pass" name="nueva_pass">
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Ejecutar</button>
+  </form>
+</div>
+
+<script>
+function toggleNuevaPass() {
+  const tarea = document.getElementById('tarea').value;
+  const divNuevaPass = document.getElementById('divNuevaPass');
+  if (tarea === 'cambiar_pass') {
+    divNuevaPass.style.display = 'block';
+    document.getElementById('nueva_pass').required = true;
+  } else {
+    divNuevaPass.style.display = 'none';
+    document.getElementById('nueva_pass').required = false;
+  }
+}
+</script>
+
+{% endblock %}

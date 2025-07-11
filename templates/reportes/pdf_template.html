@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ titulo }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2em; }
+    h1 { color: #0d6efd; }
+    small { color: #666; }
+    hr { margin: 1em 0; }
+  </style>
+</head>
+<body>
+  <h1>{{ titulo }}</h1>
+  <small>Generado por: {{ autor }} | Fecha: {{ fecha }}</small>
+  <hr>
+  <div>
+    {{ contenido | safe }}
+  </div>
+</body>
+</html>

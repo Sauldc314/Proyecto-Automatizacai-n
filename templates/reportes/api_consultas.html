@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block title %}API de Consultas{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4 text-center">🔌 API para Consultas Programáticas</h2>
+  <p>Estas APIs permiten integrar otras plataformas o scripts automatizados con este sistema. El acceso está protegido mediante login o autenticación vía token.</p>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5>📁 Consultar Backups</h5>
+      <p><code>GET /api/backups</code></p>
+      <p>Devuelve una lista de backups disponibles para el usuario actual.</p>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5>📡 Estado de Red</h5>
+      <p><code>GET /api/estado_red</code></p>
+      <p>Devuelve el estado actual de red (simulado o real).</p>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5>🚨 Alertas Recientes</h5>
+      <p><code>GET /api/alertas</code></p>
+      <p>Lista las últimas alertas detectadas por el sistema.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

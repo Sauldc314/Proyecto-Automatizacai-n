@@ -1,0 +1,4 @@
+{
+  "vlan_cuarentena": "999",
+  "interface_prefix": "GigabitEthernet0/"
+}
