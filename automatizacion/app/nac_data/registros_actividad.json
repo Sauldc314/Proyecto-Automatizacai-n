@@ -1,0 +1,23 @@
+[
+  {
+    "mac": "00:11:22:33:44:55",
+    "ip": "192.168.10.100",
+    "trafico": "normal",
+    "puertos": [80, 443],
+    "vlan_detectada": "10"
+  },
+  {
+    "mac": "AA:BB:CC:DD:EE:FF",
+    "ip": "192.168.20.200",
+    "trafico": "alto",
+    "puertos": [22, 3389],
+    "vlan_detectada": "20"
+  },
+  {
+    "mac": "11:22:33:44:55:66",
+    "ip": "192.168.30.50",
+    "trafico": "alto",
+    "puertos": [445, 139],
+    "vlan_detectada": "30"
+  }
+]

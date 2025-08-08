@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+{% block title %}CRUD{% endblock %}
+{% block content %}
+<h2>Dispositivos Registrados</h2>
+<a href="{{ url_for('nuevo_dispositivo') }}" class="btn btn-primary mb-3">Agregar Dispositivo</a>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>IP</th>
+      <th>Tipo</th>
+      <th>Ubicación</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for d in dispositivos %}
+    <tr>
+      <td>{{ d.nombre }}</td>
+      <td>{{ d.ip }}</td>
+      <td>{{ d.tipo }}</td>
+      <td>{{ d.ubicacion }}</td>
+      <td>{{ d.estado }}</td>
+      <td>
+        <a href="{{ url_for('editar_dispositivo', id=d.id) }}" class="btn btn-sm btn-warning">Editar</a>
+        <form action="{{ url_for('eliminar_dispositivo', id=d.id) }}" method="post" style="display:inline-block;">
+          <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar dispositivo?')">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

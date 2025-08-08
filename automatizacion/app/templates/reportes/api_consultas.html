@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block title %}API de Consultas{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4 text-center">🔌 API para Consultas Programáticas</h2>
+  <p>Estas APIs permiten integrar otras plataformas o scripts automatizados con este sistema. El acceso está protegido mediante login o autenticación vía token.</p>
+
+  <!-- ✅ GET /api/backups -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5>📁 Consultar Backups</h5>
+      <p><code>GET /api/backups</code></p>
+      <p>Devuelve una lista de backups disponibles para el usuario actual.</p>
+    </div>
+  </div>
+
+  <!-- ✅ GET /api/estado_red -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5>📡 Estado de Red</h5>
+      <p><code>GET /api/estado_red</code></p>
+      <p>Devuelve el estado actual de red (simulado o real).</p>
+    </div>
+  </div>
+
+  <!-- ✅ GET /api/alertas -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5>🚨 Alertas Recientes</h5>
+      <p><code>GET /api/alertas</code></p>
+      <p>Lista las últimas alertas detectadas por el sistema.</p>
+    </div>
+  </div>
+
+  <!-- 🔧 CRUD Dispositivos -->
+  <div class="card mb-4 border-success">
+    <div class="card-body">
+      <h5 class="text-success">🖧 CRUD de Dispositivos</h5>
+      <p>Permite gestionar los dispositivos de red registrados en el sistema.</p>
+
+      <ul>
+        <li><code>GET /api/dispositivos</code> – Lista todos los dispositivos</li>
+        <li><code>GET /api/dispositivos/&lt;id&gt;</code> – Consulta un dispositivo específico</li>
+        <li><code>POST /api/dispositivos</code> – Crea un nuevo dispositivo</li>
+        <li><code>PUT /api/dispositivos/&lt;id&gt;</code> – Actualiza un dispositivo existente</li>
+        <li><code>DELETE /api/dispositivos/&lt;id&gt;</code> – Elimina un dispositivo</li>
+      </ul>
+
+      <hr>
+
+      <h6>📌 Ejemplo: Crear dispositivo con <code>curl</code></h6>
+      <pre><code class="language-bash">curl -X POST http://localhost:5000/api/dispositivos \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre": "SW01",
+    "ip": "192.168.1.10",
+    "tipo": "cisco_ios",
+    "ubicacion": "Sala de servidores"
+  }'</code></pre>
+
+      <h6>📌 Ejemplo: Obtener dispositivos con <code>curl</code></h6>
+      <pre><code class="language-bash">curl http://localhost:5000/api/dispositivos</code></pre>
+
+      <h6>📌 Ejemplo: Eliminar dispositivo</h6>
+      <pre><code class="language-bash">curl -X DELETE http://localhost:5000/api/dispositivos/3</code></pre>
+    </div>
+  </div>
+</div>
+{% endblock %}

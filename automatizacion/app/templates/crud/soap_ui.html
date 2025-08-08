@@ -1,0 +1,210 @@
+{% extends "layout.html" %}
+{% block title %}Consumir API SOAP{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">🧼 Prueba en línea de API SOAP</h2>
+  <p>Consume funciones SOAP directamente desde el navegador.</p>
+
+  <!-- 🔍 GET DISPOSITIVO -->
+  <form onsubmit="getDispositivo(); return false;" class="mb-3">
+    <h5>🔍 Consultar dispositivo por ID</h5>
+    <input type="number" id="get-id" class="form-control mb-2" placeholder="ID del dispositivo" required>
+    <button class="btn btn-primary">Consultar</button>
+  </form>
+
+  <!-- 📋 GET ALL -->
+  <form onsubmit="getAllDispositivos(); return false;" class="mb-3">
+    <h5>📋 Obtener todos los dispositivos</h5>
+    <button class="btn btn-secondary">Traer todos</button>
+  </form>
+
+  <!-- ➕ INSERTAR -->
+  <form onsubmit="addDispositivo(); return false;" class="mb-3">
+    <h5>➕ Agregar nuevo dispositivo</h5>
+    <input type="text" id="add-nombre" class="form-control mb-1" placeholder="Nombre" required>
+    <input type="text" id="add-ip" class="form-control mb-1" placeholder="IP" required>
+    <input type="text" id="add-tipo" class="form-control mb-1" placeholder="Tipo (cisco_ios)" required>
+    <input type="text" id="add-ubicacion" class="form-control mb-1" placeholder="Ubicación" required>
+    <button class="btn btn-success">Agregar</button>
+  </form>
+
+  <!-- ✏️ UPDATE -->
+  <form onsubmit="updateUbicacion(); return false;" class="mb-3">
+    <h5>✏️ Actualizar ubicación</h5>
+    <input type="number" id="upd-id" class="form-control mb-1" placeholder="ID del dispositivo" required>
+    <input type="text" id="upd-ubicacion" class="form-control mb-1" placeholder="Nueva ubicación" required>
+    <button class="btn btn-warning">Actualizar</button>
+  </form>
+
+  <!-- 🗑️ DELETE -->
+  <form onsubmit="deleteDispositivo(); return false;" class="mb-3">
+    <h5>🗑️ Eliminar dispositivo</h5>
+    <input type="number" id="del-id" class="form-control mb-2" placeholder="ID del dispositivo" required>
+    <button class="btn btn-danger">Eliminar</button>
+  </form>
+
+  <!-- 📄 RESULTADO -->
+  <div class="mt-4">
+    <h5>📄 Respuesta del servidor:</h5>
+    <div id="respuesta" class="border rounded p-3 bg-light">---</div>
+  </div>
+</div>
+
+<script>
+const sendSoapRequest = async (body, methodName) => {
+  const res = await fetch("/soap", {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/xml;charset=UTF-8"
+    },
+    body: body
+  });
+
+  const text = await res.text();
+  const doc = new DOMParser().parseFromString(text, "text/xml");
+  const results = Array.from(doc.getElementsByTagName("*"))
+    .filter(el => el.tagName.toLowerCase().includes(methodName.toLowerCase() + "result"));
+
+  const contenedor = document.getElementById("respuesta");
+
+  if (!results.length) {
+    contenedor.innerHTML = "<span class='text-danger'>❌ No se obtuvo respuesta válida.</span>";
+    return;
+  }
+
+  if (methodName === "getAllDispositivos") {
+    // Solo tomamos el contenido del primer resultado que trae todo concatenado
+    const rawText = results[0].textContent || "";
+
+    // Separar cada dispositivo usando "ID:" como delimitador (y filtrar vacíos)
+    const dispositivos = rawText.split("ID:").filter(p => p.trim() !== "").map(p => "ID:" + p.trim());
+
+    let html = `
+      <table class="table table-bordered table-sm mt-2">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th><th>Nombre</th><th>IP</th><th>Estado</th><th>Ubicación</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+    dispositivos.forEach(d => {
+      const id = d.match(/ID:\s*(\d+)/)?.[1] || "-";
+      const nombre = d.match(/Nombre:\s*([^\|]+)/)?.[1]?.trim() || "-";
+      const ip = d.match(/IP:\s*([^\|]+)/)?.[1]?.trim() || "-";
+      const estado = d.match(/Estado:\s*([^\|]+)/)?.[1]?.trim() || "-";
+      const ubicacion = d.match(/Ubicacion:\s*(.+)/)?.[1]?.trim() || "-";
+
+      html += `<tr>
+        <td>${id}</td>
+        <td>${nombre}</td>
+        <td>${ip}</td>
+        <td>${estado}</td>
+        <td>${ubicacion}</td>
+      </tr>`;
+    });
+
+    html += "</tbody></table>";
+    contenedor.innerHTML = html;
+
+  } else {
+    // Para métodos individuales (getDispositivo, add, update, delete)
+    const rowText = results[0].textContent || "";
+    const filas = rowText.split('\n').map(f => f.trim()).filter(f => f);
+
+    let html = "";
+    filas.forEach(fila => {
+      const partes = fila.split('|').map(p => p.trim());
+      partes.forEach(p => {
+        const [k, v] = p.split(':').map(s => s.trim());
+        let icon = "";
+        if (/id/i.test(k)) icon = "🆔";
+        else if (/nombre/i.test(k)) icon = "📛";
+        else if (/ip/i.test(k)) icon = "🌐";
+        else if (/estado/i.test(k)) icon = "📶";
+        else if (/ubicacion/i.test(k)) icon = "📍";
+        else icon = "🔸";
+        html += `${icon} <strong>${k}</strong>: ${v}<br>`;
+      });
+      html += "<hr>";
+    });
+
+    contenedor.innerHTML = html;
+  }
+
+  console.log("XML recibido:", text);
+  console.log("Resultados encontrados:", results.length, results);
+};
+
+function getDispositivo() {
+  const id = document.getElementById("get-id").value;
+  const body = `
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:dispositivo.soap">
+    <soapenv:Body>
+      <urn:getDispositivo>
+        <urn:id>${id}</urn:id>
+      </urn:getDispositivo>
+    </soapenv:Body>
+  </soapenv:Envelope>`;
+  sendSoapRequest(body, "getDispositivo");
+}
+
+function getAllDispositivos() {
+  const body = `
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:dispositivo.soap">
+    <soapenv:Body>
+      <urn:getAllDispositivos/>
+    </soapenv:Body>
+  </soapenv:Envelope>`;
+  sendSoapRequest(body, "getAllDispositivos");
+}
+
+function addDispositivo() {
+  const n = document.getElementById("add-nombre").value;
+  const ip = document.getElementById("add-ip").value;
+  const tipo = document.getElementById("add-tipo").value;
+  const ubic = document.getElementById("add-ubicacion").value;
+  const body = `
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:dispositivo.soap">
+    <soapenv:Body>
+      <urn:addDispositivo>
+        <urn:nombre>${n}</urn:nombre>
+        <urn:ip>${ip}</urn:ip>
+        <urn:tipo>${tipo}</urn:tipo>
+        <urn:ubicacion>${ubic}</urn:ubicacion>
+      </urn:addDispositivo>
+    </soapenv:Body>
+  </soapenv:Envelope>`;
+  sendSoapRequest(body, "addDispositivo");
+}
+
+function updateUbicacion() {
+  const id = document.getElementById("upd-id").value;
+  const nuevaUbic = document.getElementById("upd-ubicacion").value;
+  const body = `
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:dispositivo.soap">
+    <soapenv:Body>
+      <urn:updateUbicacion>
+        <urn:id>${id}</urn:id>
+        <urn:nueva_ubicacion>${nuevaUbic}</urn:nueva_ubicacion>
+      </urn:updateUbicacion>
+    </soapenv:Body>
+  </soapenv:Envelope>`;
+  sendSoapRequest(body, "updateUbicacion");
+}
+
+function deleteDispositivo() {
+  const id = document.getElementById("del-id").value;
+  const body = `
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:dispositivo.soap">
+    <soapenv:Body>
+      <urn:deleteDispositivo>
+        <urn:id>${id}</urn:id>
+      </urn:deleteDispositivo>
+    </soapenv:Body>
+  </soapenv:Envelope>`;
+  sendSoapRequest(body, "deleteDispositivo");
+}
+</script>
+{% endblock %}

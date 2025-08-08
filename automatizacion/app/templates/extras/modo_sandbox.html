@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}Modo Sandbox{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4 text-center">🧪 Modo Sandbox</h2>
+
+  <p>Este entorno simulado te permite probar comandos y ver su efecto sin modificar ningún dispositivo real. Ideal para aprendizaje o validación.</p>
+
+  <form method="POST" class="border rounded shadow-sm p-4 bg-light mb-4">
+    <div class="mb-3">
+      <label for="comandos" class="form-label">Comandos de prueba</label>
+      <textarea name="comandos" rows="8" class="form-control" placeholder="Ej:\nshow running-config\nshow ip interface brief" required>{{ comandos }}</textarea>
+    </div>
+    <div class="text-end">
+      <button class="btn btn-primary">Ejecutar</button>
+    </div>
+  </form>
+
+  {% if salida_simulada %}
+  <div class="card">
+    <div class="card-header bg-dark text-white">🧾 Resultado Simulado</div>
+    <div class="card-body bg-white">
+      <pre>{{ salida_simulada }}</pre>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

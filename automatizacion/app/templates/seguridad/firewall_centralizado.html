@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block title %}Firewall Centralizado{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4 text-center">Firewall Centralizado Dinámico</h2>
+
+  <form method="POST" class="row g-3">
+    <div class="col-md-2">
+      <label class="form-label">Acción</label>
+      <select name="action" class="form-select" required>
+        <option value="permit">permit</option>
+        <option value="deny">deny</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Origen</label>
+      <input type="text" class="form-control" name="origen" placeholder="IP o any" required>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Destino</label>
+      <input type="text" class="form-control" name="destino" placeholder="IP o any" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Protocolo</label>
+      <input type="text" class="form-control" name="protocolo" placeholder="tcp/udp" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Puerto</label>
+      <input type="text" class="form-control" name="puerto" placeholder="80, 443..." required>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Descripción (opcional)</label>
+      <input type="text" class="form-control" name="descripcion">
+    </div>
+
+    <div class="col-md-6 d-flex align-items-end">
+      <div class="form-check me-3">
+        <input class="form-check-input" type="checkbox" name="aplicar" id="aplicar">
+        <label class="form-check-label" for="aplicar">Aplicar al dispositivo</label>
+      </div>
+      <input type="text" class="form-control me-2" name="ip" placeholder="IP dispositivo">
+      <input type="text" class="form-control me-2" name="username" placeholder="Usuario">
+      <input type="password" class="form-control" name="password" placeholder="Contraseña">
+      <input type="password" class="form-control me-2" id="secret" name="secret" placeholder="Enable Secret (opcional)">
+    </div>
+
+    <div class="col-12 text-end">
+      <button type="submit" class="btn btn-primary">Guardar regla</button>
+    </div>
+  </form>
+
+  <hr>
+  <h5>Reglas Guardadas</h5>
+  <ul class="list-group">
+    {% for regla in reglas %}
+    <li class="list-group-item">{{ regla }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
